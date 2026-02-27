@@ -1,0 +1,5 @@
+1. What linkers do ?
+2. Symbols
+3. ELF header
+4. How to resolve symbols - Strong -> defined function , initialized variables
+			  - Weak -> Uninitialized variables

@@ -1,0 +1,17 @@
+skc@skc-Latitude-3420:~/newpro/system_programming/linkers$ make
+gcc -Wall -Wextra -std=c99 -c weakmain.c -o weakmain.o
+gcc -Wall -Wextra -std=c99 -c weaklibrary.c -o weaklibrary.o
+gcc weakmain.o weaklibrary.o -o combined_program 
+/usr/bin/ld: weaklibrary.o:(.bss+0x0): multiple definition of `x'; weakmain.o:(.data+0x0): first defined here
+collect2: error: ld returned 1 exit status
+make: *** [Makefile:17: combined_program] Error 1
+skc@skc-Latitude-3420:~/newpro/system_programming/linkers$ make clean
+rm -f weakmain.o weaklibrary.o combined_program
+skc@skc-Latitude-3420:~/newpro/system_programming/linkers$ vim Makefile 
+skc@skc-Latitude-3420:~/newpro/system_programming/linkers$ make
+gcc -Wall -Wextra -std=c99 -c weakmain.c -o weakmain.o
+gcc -Wall -Wextra -std=c99 -c weaklibrary.c -o weaklibrary.o
+gcc weakmain.o weaklibrary.o -o combined_program -z muldefs
+skc@skc-Latitude-3420:~/newpro/system_programming/linkers$ ./combined_program 
+; ) 
+
