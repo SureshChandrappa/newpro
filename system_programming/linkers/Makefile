@@ -3,18 +3,23 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
 LDFLAGS = -z muldefs
 
-# Target executable
-TARGET = combined_program
+# Target executables
+TARGETS = combined_program main_sum
 
 # Object files
-OBJS = weakmain.o weaklibrary.o
+COMBINED_OBJS = weakmain.o weaklibrary.o
+MAIN_SUM_OBJS = main.o sum.o
 
 # Default target
-all: $(TARGET)
+all: $(TARGETS)
 
-# Link the program (using -z muldefs to allow multiple definitions)
-$(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
+# Link combined_program
+combined_program: $(COMBINED_OBJS)
+	$(CC) $(COMBINED_OBJS) -o combined_program $(LDFLAGS)
+
+# Link main_sum
+main_sum: $(MAIN_SUM_OBJS)
+	$(CC) $(MAIN_SUM_OBJS) -o main_sum $(LDFLAGS)
 
 # Compile weakmain.c
 weakmain.o: weakmain.c
@@ -24,9 +29,17 @@ weakmain.o: weakmain.c
 weaklibrary.o: weaklibrary.c
 	$(CC) $(CFLAGS) -c weaklibrary.c -o weaklibrary.o
 
+# Compile main.c
+main.o: main.c sum.h
+	$(CC) $(CFLAGS) -c main.c -o main.o
+
+# Compile sum.c
+sum.o: sum.c sum.h
+	$(CC) $(CFLAGS) -c sum.c -o sum.o
+
 # Clean up build files
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(COMBINED_OBJS) $(MAIN_SUM_OBJS) $(TARGETS)
 
 # Phony targets
 .PHONY: all clean
