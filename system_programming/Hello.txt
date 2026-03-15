@@ -1,0 +1,48 @@
+Start: Do I need synchronization?
+       |
+       +--> Is it just a counter/flag?
+       |           |
+       |           +--> Yes --> Atomic Operations
+       |           |
+       |           +--> No --> Continue
+       |
+       +--> Can the code sleep?
+       |           |
+       |           +--> Yes --> Process context only
+       |           |           |
+       |           |           +--> Is it just event notification?
+       |           |           |       |
+       |           |           |       +--> Yes --> Completion
+       |           |           |       |
+       |           |           |       +--> No --> Is it a resource pool?
+       |           |           |               |
+       |           |           |               +--> Yes --> Semaphore
+       |           |           |               |
+       |           |           |               +--> No --> Mutex
+       |           |
+       |           +--> No --> Interrupt context possible
+       |                       |
+       |                       +--> Is critical section short?
+       |                               |
+       |                               +--> Yes --> Spinlock variants
+       |                               |
+       |                               +--> No --> Redesign (can't sleep in interrupt!)
+       |
+       +--> Read/write pattern analysis
+                    |
+                    +--> Reads >> Writes?
+                    |       |
+                    |       +--> Can readers tolerate retries/stale data?
+                    |       |       |
+                    |       |       +--> Yes, stale OK --> RCU
+                    |       |       |
+                    |       |       +--> No, must retry --> Seqlock
+                    |       |
+                    |       +--> Reads moderate, writes moderate --> R/W Spinlock
+                    |
+                    +--> Writes >> Reads?
+                            |
+                            +--> Small data? --> Seqlock
+                            |
+                            +--> Large data? --> RCU (if reads still matter)
+                                                 or Mutex (if writes dominate)
